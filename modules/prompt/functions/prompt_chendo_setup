@@ -1,0 +1,77 @@
+#
+# Based on sorin's theme
+#
+# Authors:
+#   Sorin Ionescu <sorin.ionescu@gmail.com>
+#   Jack Chen <chendo@gmail.com>
+#
+#
+
+function prompt_chendo_pwd() {
+  local repo="${$(git rev-parse -q --show-toplevel 2> /dev/null):t}"
+
+  parts=(${(s:/:)${${PWD}/#${HOME}/\~}})
+
+  i=0
+  while (( i++ < ${#parts} )); do
+    part="$parts[i]"
+    if [[ "$part" == "$repo" ]]; then
+      # if this part of the path represents the repo,
+      # underline it, and skip truncating the component
+      parts[i]="%U$part%u"
+    else
+      # Shorten the path as long as it isn't the last piece
+      if [[ "$parts[${#parts}]" != "$part" ]]; then
+        parts[i]="$part[1,2]"
+      fi
+    fi
+  done
+
+  print "${(j:/:)parts}"
+}
+
+function prompt_chendo_precmd {
+  setopt LOCAL_OPTIONS
+  unsetopt XTRACE KSH_ARRAYS
+
+  if (( $+functions[git-info] )); then
+    git-info
+  fi
+}
+
+function prompt_chendo_setup {
+  setopt LOCAL_OPTIONS
+  unsetopt XTRACE KSH_ARRAYS
+  prompt_opts=(cr percent subst)
+
+  autoload -Uz add-zsh-hook
+  add-zsh-hook precmd prompt_chendo_precmd
+
+  zstyle ':omz:module:editor' completing '%B%F{red}...%f%b'
+  zstyle ':omz:module:editor:keymap:primary' overwrite ' %F{red}♺%f'
+  zstyle ':omz:module:editor:keymap' alternate ' %F{yellow}❮%f%B%F{red}❮%f%b%F{red}❮%f'
+  zstyle ':omz:module:git' action ':%%B%F{yellow}%s%f%%b'
+  zstyle ':omz:module:git' added ' %%B%F{green}✚%f%%b'
+  zstyle ':omz:module:git' ahead ' %%B%F{yellow}⬆%f%%b'
+  zstyle ':omz:module:git' behind ' %%B%F{yellow}⬇%f%%b'
+  zstyle ':omz:module:git' branch ':%F{red}%b%f'
+  zstyle ':omz:module:git' commit ':%F{green}%.7c%f'
+  zstyle ':omz:module:git' deleted ' %%B%F{red}✖%f%%b'
+  zstyle ':omz:module:git' modified ' %%B%F{blue}✱%f%%b'
+  zstyle ':omz:module:git' position ':%F{green}%p%f'
+  zstyle ':omz:module:git' renamed ' %%B%F{magenta}➜%f%%b'
+  zstyle ':omz:module:git' stashed ' %%B%F{cyan}✭%f%%b'
+  zstyle ':omz:module:git' unmerged ' %%B%F{yellow}═%f%%b'
+  zstyle ':omz:module:git' untracked ' %%B%F{white}◼%f%%b'
+  zstyle ':omz:module:git' info \
+    'prompt'  ' %F{blue}±%f$(coalesce "%b" "%p" "%c")%s' \
+    'rprompt' '%A%B%S%a%d%m%r%U%u'
+
+  PROMPT='%F{cyan}%1~%f${git_info:+${(e)git_info[prompt]}} %(!.%B%F{red}#%f%b.%B%F{green}❯%f%b) '
+  PROMPT='%F{cyan}$(prompt_chendo_pwd)${git_info:+${(e)git_info[prompt]}} %(!.%B%F{red}#%f%b.%B%F{green}❯%f%b) '
+  RPROMPT='${editor_info[keymap]}${editor_info[overwrite]}%(?:: %F{red}⏎%f)${VIM:+" %B%F{green}V%f%b"}${git_info[rprompt]} %D{%H:%M:%S}'
+  SPROMPT='zsh: correct %F{red}%R%f to %F{green}%r%f [nyae]? '
+}
+
+prompt_chendo_setup "$@"
+

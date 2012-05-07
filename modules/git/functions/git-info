@@ -162,7 +162,8 @@ EOF
   git-info
   return 0
 }
-add-zsh-trap INT _git-info-abort
+# I press ctrl+c all the time lol
+# add-zsh-trap INT _git-info-abort
 
 # Gets the Git status information.
 function git-info {
