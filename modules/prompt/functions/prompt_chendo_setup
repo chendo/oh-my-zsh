@@ -31,10 +31,10 @@ function prompt_chendo_pwd() {
 }
 
 # Colors vary depending on time lapsed.
-ZSH_THEME_GIT_TIME_SINCE_COMMIT_SHORT="%F{cyan}"
+ZSH_THEME_GIT_TIME_SINCE_COMMIT_SHORT="%F{green}"
 ZSH_THEME_GIT_TIME_SHORT_COMMIT_MEDIUM="%F{yellow}"
 ZSH_THEME_GIT_TIME_SINCE_COMMIT_LONG="%F{red}"
-ZSH_THEME_GIT_TIME_SINCE_COMMIT_NEUTRAL="%F{yellow}"
+ZSH_THEME_GIT_TIME_SINCE_COMMIT_NEUTRAL="%F{green}"
 # Determine the time since last commit. If branch is clean,
 # use a neutral color, otherwise colors will vary according to time.
 function git_time_since_commit() {
@@ -121,7 +121,7 @@ function prompt_chendo_setup {
   PROMPT='%F{cyan}%1~%f${git_info:+${(e)git_info[prompt]}} %(!.%B%F{red}#%f%b.%B%F{green}❯%f%b) '
   PROMPT='%F{cyan}$(prompt_chendo_pwd)${git_info:+${(e)git_info[prompt]}} %(!.%B%F{red}#%f%b.%B%F{green}❯%f%b) '
   RPROMPT='${editor_info[keymap]}${editor_info[overwrite]}%(?:: %F{red}⏎%f)${VIM:+" %B%F{green}V%f%b"}${git_info[rprompt]} %D{%H:%M:%S}'
-  RPROMPT='$(git_time_since_commit)${editor_info[keymap]}${editor_info[overwrite]}%(?:: %F{red}⏎%f)${VIM:+" %B%F{green}V%f%b"}${git_info[rprompt]} %D{%H:%M:%S}'
+  RPROMPT='$(git_time_since_commit)%f${editor_info[keymap]}${editor_info[overwrite]}%(?:: %F{red}⏎%f)${VIM:+" %B%F{green}V%f%b"}${git_info[rprompt]} %D{%H:%M:%S}'
   SPROMPT='zsh: correct %F{red}%R%f to %F{green}%r%f [nyae]? '
 }
 
